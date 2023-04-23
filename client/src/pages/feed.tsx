@@ -74,8 +74,8 @@ const FeedPage = (props: {}) => {
       <div className={"feed-list"}>
         { LAPIResponse.map( (val, i) =>
           <div key={i} className={"feed-item"}>
-            <div className={"delete-item"} onClick={(e) => deletePost(`${val.id}`)}>ⓧ</div>
-            <div className={"update-item"} onClick={(e) => updatePost(`${val.id}`)}>㉧</div>
+            <div className={"delete-item"} onClick={(e) => deletePost(`${val._id}`)}>ⓧ</div>
+            <div className={"update-item"} onClick={(e) => updatePost(`${val._id}`)}>㉧</div>
             <h3 className={"feed-title"}>{ val.title }</h3>
             <p className={"feed-body"}>{ val.content }</p>
           </div>

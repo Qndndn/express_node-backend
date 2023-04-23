@@ -34,11 +34,11 @@ app.use('/ssr', ssrRouter);
 app.use('/static', express.static(path.join(__dirname,'public')));
 
 // Connect to MongoDB
-const OMongooseOption = { useNewUrlParser: true, useUnifiedTopology: true };
-mongoose.connect(process.env.MONGO_URI, OMongooseOption).then(
-    () => { console.log("[Mongoose] Connection Complete!") },
-    (err) => { console.log(`[Mongoose] Connection Error: ${ err }`) }
-);
+// const OMongooseOption = { useNewUrlParser: true, useUnifiedTopology: true };
+// mongoose.connect(process.env.MONGO_URI, OMongooseOption).then(
+//     () => { console.log("[Mongoose] Connection Complete!") },
+//     (err) => { console.log(`[Mongoose] Connection Error: ${ err }`) }
+// );
 
 app.listen(port, () => {
    console.log(`Example App Listening @ http://localhost:${ port }`);
