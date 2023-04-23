@@ -1,8 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const mongoose = require('mongoose');
-require('dotenv').config();
+require('dotenv').config({path: '.env.example'});
 
 const statusRouter = require('./routes/status');
 const feedRouter = require('./routes/feed');
@@ -11,10 +10,11 @@ const ssrRouter = require('./routes/ssr');
 
 const app = express();
 const port = process.env.PORT;
+console.log(port);
 
 app.use(express.json());
 
-const whitelist = ['http://localhost:3000'];
+const whitelist = ['http://localhost:3000','http://172.17.196.164:3000'];
 const corsOptions = {
     origin: (origin, callback) => {
         console.log('[REQUEST-CORS] Request from origin: ', origin);
