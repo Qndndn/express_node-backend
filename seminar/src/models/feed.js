@@ -17,4 +17,4 @@ const schema = new mongoose.Schema(OSchemaDefinition, OSchemaOptions);
 
 const FeedModel = mongoose.model("feed", schema);
 
-
+module.exports = FeedModel;

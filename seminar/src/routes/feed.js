@@ -14,25 +14,24 @@ class FeedDB {
 
     constructor() { console.log("[Feed-DB] DB Init Completed"); }
 
-    selectItems = async ( count, search ) => {
+    selectItems = async ( count ) => {
         try {
             if (count === 0) return { success: true, data: [] };
             // We'll Remove the Item Count Limit for Search... (Really, this is unnecessary)
-            /*
+            
             const DBItemCount = await FeedModel.countDocuments();
             if (count > DBItemCount) return { success: false, data: "Too many items queried"  };
             if (count < 0) return { success: false, data: "Invalid count provided" };
-            */
-            const findArguments = search === "" ? {} : {$or: [ { title: { "$regex": search } }, { content: { "$regex": search } } ]};
-            const res = await FeedModel.find(findArguments).sort({'createdAt': -1}).limit(count).exec();
+            
+            const res = await FeedModel.find().sort({'createdAt': -1}).limit(count).exec();
             return { success: true, data: res };
         } catch (e) {
             console.log(`[Feed-DB] Select Error: ${ e }`);
             return { success: false, data: `DB Error - ${ e }` };
         }
     }
-
-    insertItem = async ( item ) => {
+    
+    insertItem = async( item ) => {
         const { title, content } = item;
         try {
             const newItem = new FeedModel({ title, content });
@@ -55,18 +54,16 @@ class FeedDB {
         }
     }
 
-    updateItem = ( id, item ) => {
-        let BItemmodified = false;
-        this.#LDataDB.forEach((value) => {
-            const match = (value.id === id)
-            if (match) {
-                value.title = item.new_Title;
-                value.content = item.new_Content;
-                BItemmodified = true;
-            }
-        });
-        return BItemmodified;
-    }
+    editItem = async (id, content) => {	
+        try{
+            const res = await FeedModel.updateOne({_id : id}, {content : content})	
+            return true;	
+        }catch (e){	
+            console.log(`[Feed-DB] Edit Error: ${ e }`);	
+            return false;	
+        }	
+        	
+    }	
 }
 
 const feedDBInst = FeedDB.getInst();
@@ -74,8 +71,7 @@ const feedDBInst = FeedDB.getInst();
 router.get('/getFeed', async (req, res) => {
     try {
         const requestCount = parseInt(req.query.count);
-        const searchString = req.query.search;
-        const dbRes = await feedDBInst.selectItems(requestCount, searchString);
+        const dbRes = await feedDBInst.selectItems(requestCount);
         if (dbRes.success) return res.status(200).json(dbRes.data);
         else return res.status(500).json({ error: dbRes.data })
     } catch (e) {
@@ -105,12 +101,11 @@ router.post('/deleteFeed', async (req, res) => {
     }
 });
 
-router.post('/updateFeed', (req, res) => {
+router.post('/editFeed', async (req, res) => {
     try{
-        const {id, title, content} = req.body;
-        const updateResult = feedDBInst.updateItem(parseInt(id), { new_Title: title, new_Content: content });
-        if (!updateResult) return res.status(500).json({ error: "No item updated" });
-        else return res.status(200).json({ isOK: true });
+        const {id, content} = req.body;
+        const editResult = feedDBInst.editItem(id, content);
+        return res.status(200).json({ isOK: true });
     } catch (e) {
         return res.status(500).json({ error: e });
     }
